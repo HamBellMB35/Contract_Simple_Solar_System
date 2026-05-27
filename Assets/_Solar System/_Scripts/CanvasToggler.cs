@@ -16,7 +16,7 @@ public class CanvasToggler : MonoBehaviour
     void Update()
     {
         // We only want to run the toggle logic IF the key is actually pressed
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.P))
         {
             ToggleCanvas();
         }

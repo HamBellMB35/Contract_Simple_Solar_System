@@ -3,6 +3,9 @@ using System.Collections;
 
 public class LookAtCelestialBody : MonoBehaviour {
 
+    [Tooltip("Reference to our camera controller")]
+    private UnityEditorCamera _editorCameraScript; // Reference to the camera controller script
+
     [Tooltip("This is the object that the script's game object will look at by default")]
     public GameObject defaultTarget; // the default target that the camera should look at
 
@@ -12,45 +15,58 @@ public class LookAtCelestialBody : MonoBehaviour {
     [Tooltip("This is to cache de Main camera for performance improvement")]
     public Camera _mainCamera; // the target that the camera should look at
 
-    [Tooltip("This is the speed of the camera rotation")]
-    [SerializeField] float rotationSpeed = 5f; // Speed at which the camera rotates to look at the target
-
     void Awake()
     {
+        // Check if the main camera is assigned, if not, find it automatically
         if (_mainCamera == null)
         {
             _mainCamera = Camera.main;
 
-            // If _mainCamera is still null for any reason, log an error
+            // If _mainCamera is still null for any reason, log an error to let us know
             if (_mainCamera == null)
             {
                 Debug.LogError("LookAtCelestialBody: No main camera found. Please assign a Camera in the Inspector or tag a Camera as 'MainCamera'.");
             }
         }
+
+        // If we found our main camera, try to grab our custom movement script attached to it
+        if (_mainCamera != null)
+        {
+            _editorCameraScript = _mainCamera.GetComponent<UnityEditorCamera>();
+
+            // Log an error if the movement script is missing from the camera component list
+            if (_editorCameraScript == null)
+            {
+                Debug.LogError("LookAtCelestialBody: No UnityEditorCamera script found on the main camera. Please ensure the main camera has a UnityEditorCamera component.");
+            }
+        }
     }
 
-    void Start () {
-		if (defaultTarget == null) 
-		{
+    void Start()
+    {
+        // If no default target is set, default back to the parent GameObject this script is on
+        if (defaultTarget == null)
+        {
             defaultTarget = this.gameObject;
-			Debug.Log ("defaultTarget target not specified. Defaulting to parent GameObject");
-		}
+            Debug.Log("defaultTarget target not specified. Defaulting to parent GameObject");
+        }
 
+        // If no current target is set, default back to the parent GameObject as well
         if (currentTarget == null)
         {
             currentTarget = this.gameObject;
             Debug.Log("currentTarget target not specified. Defaulting to parent GameObject");
         }
     }
-	
-	// Update is called once per frame
+
+    // Update is called once per frame
     // For clarity, Update happens constantly as your game is running
     void Update()
     {
-        TargetClestialBody();
+        TargetCelestialBody();
     }
 
-    void TargetClestialBody()
+    void TargetCelestialBody()
     {
         // if primary mouse button is pressed
         if (Input.GetMouseButtonDown(0))
@@ -59,43 +75,33 @@ public class LookAtCelestialBody : MonoBehaviour {
             Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
 
             // cast a ray to see if it hits any gameObjects
-            //RaycastHit[] hits;
-            //hits = Physics.RaycastAll(ray);
-
-            // if there are hits
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
                 currentTarget = hit.collider.gameObject;
                 Debug.Log($"Target changed to: {currentTarget.name}");
+
+                // THE HANDOFF: Tell our editor type camera script that this is the new target
+                // We pass the reference directly over so the camera knows what to move towards
+                if (_editorCameraScript != null)
+                {
+                    _editorCameraScript.currenTarget = currentTarget.transform;
+                }
             }
         }
-        else if (Input.GetMouseButtonDown(1)) // if the second mouse button is pressed
+        // if the second mouse button is pressed, reset back to the default target
+        else if (Input.GetMouseButtonDown(1))
         {
             currentTarget = defaultTarget;
             Debug.Log("defaultTarget changed to " + currentTarget.name);
+
+            // Update our editor camera script to use the default target too
+            if (_editorCameraScript != null && defaultTarget != null)
+            {
+                _editorCameraScript.currenTarget = defaultTarget.transform;
+            }
         }
 
-        // if a currentTarget is set, then look at it
-        if (currentTarget != null)
-        {
-            // transform here refers to the attached gameobject this script is on.
-            // the LookAt function makes a transform point it's Z axis towards another point in space
-            // In this case it is pointing towards the target.transform
-            //transform.LookAt(currentTarget.transform);
-            
-            // Calculate the direction to the target
-            Vector3 directionToTarget = currentTarget.transform.position - transform.position;
-
-            // Calculate the rotation needed to look at the target
-            Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
-
-            // Smoothly rotate towards the target rotation
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-        }
-        else // reset the look at back to the default
-        {
-            currentTarget = defaultTarget;
-            Debug.Log("defaultTarget changed to " + currentTarget.name);
-        }
+        // The forced Quaternion.Slerp rotation system was removed from this method!
+        // This ensures the selection script does not fight the camera's orbiting controls.
     }
 }
