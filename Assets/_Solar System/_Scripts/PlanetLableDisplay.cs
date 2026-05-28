@@ -10,10 +10,10 @@ public class PlanetLableDisplay : MonoBehaviour
     [SerializeField] private Transform _planetTransform;
 
     [Tooltip("This is the position of the lable relative to the planet")]
-    [SerializeField] private float _dynamicOffset;
+    [SerializeField] private float _dynamicOffset = 4f;
 
     [Tooltip("This is the extra percentage of breathing room for the lable's height")]
-    [SerializeField] private float _breathingRoom;
+    [SerializeField] private float _breathingRoom = 0.5f;
 
     private Camera _mainCamera;
     private TextMeshProUGUI _textComponent;

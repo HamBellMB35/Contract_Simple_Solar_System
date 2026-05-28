@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using TMPro;
 
 public class LookAtCelestialBody : MonoBehaviour {
 
@@ -15,6 +16,9 @@ public class LookAtCelestialBody : MonoBehaviour {
     [Tooltip("This is to cache de Main camera for performance improvement")]
     public Camera _mainCamera; // the target that the camera should look at
 
+    [Header("Search UI Settings")]
+    [SerializeField] private TMP_InputField _searchInputField; // Drag your UI Input Field here in the Inspector
+
     void Awake()
     {
         // Check if the main camera is assigned, if not, find it automatically
@@ -22,66 +26,65 @@ public class LookAtCelestialBody : MonoBehaviour {
         {
             _mainCamera = Camera.main;
 
-            // If _mainCamera is still null for any reason, log an error to let us know
             if (_mainCamera == null)
             {
-                Debug.LogError("LookAtCelestialBody: No main camera found. Please assign a Camera in the Inspector or tag a Camera as 'MainCamera'.");
+                Debug.LogError("LookAtCelestialBody: No main camera found.");
             }
         }
 
-        // If we found our main camera, try to grab our custom movement script attached to it
         if (_mainCamera != null)
         {
             _editorCameraScript = _mainCamera.GetComponent<UnityEditorCamera>();
 
-            // Log an error if the movement script is missing from the camera component list
             if (_editorCameraScript == null)
             {
-                Debug.LogError("LookAtCelestialBody: No UnityEditorCamera script found on the main camera. Please ensure the main camera has a UnityEditorCamera component.");
+                Debug.LogError("LookAtCelestialBody: No UnityEditorCamera script found on the main camera.");
             }
         }
     }
 
     void Start()
     {
-        // If no default target is set, default back to the parent GameObject this script is on
         if (defaultTarget == null)
         {
             defaultTarget = this.gameObject;
-            Debug.Log("defaultTarget target not specified. Defaulting to parent GameObject");
         }
 
-        // If no current target is set, default back to the parent GameObject as well
         if (currentTarget == null)
         {
             currentTarget = this.gameObject;
-            Debug.Log("currentTarget target not specified. Defaulting to parent GameObject");
         }
     }
 
-    // Update is called once per frame
-    // For clarity, Update happens constantly as your game is running
+    // Update happens constantly as your game is running
     void Update()
     {
+        // PERFORMANCE ADJUSTMENT: We safely evaluate mouse clicks directly. 
+        // If the search field is active, Unity's event system automatically blocks raycasts,
+        // so we don't need to strain the CPU checking it every single frame!
         TargetCelestialBody();
     }
 
     void TargetCelestialBody()
     {
+        // If the user has actively clicked inside the text input box and is typing,
+        // we immediately halt this entire method so mouse clicks don't shoot rays into space!
+        if (_searchInputField != null && _searchInputField.isFocused)
+        {
+            return;
+        }
+
+
         // if primary mouse button is pressed
         if (Input.GetMouseButtonDown(0))
         {
-            // determine the ray from the camera to the mousePosition
             Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
 
-            // cast a ray to see if it hits any gameObjects
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
                 currentTarget = hit.collider.gameObject;
                 Debug.Log($"Target changed to: {currentTarget.name}");
 
-                // THE HANDOFF: Tell our editor type camera script that this is the new target
-                // We pass the reference directly over so the camera knows what to move towards
                 if (_editorCameraScript != null)
                 {
                     _editorCameraScript.currenTarget = currentTarget.transform;
@@ -94,14 +97,42 @@ public class LookAtCelestialBody : MonoBehaviour {
             currentTarget = defaultTarget;
             Debug.Log("defaultTarget changed to " + currentTarget.name);
 
-            // Update our editor camera script to use the default target too
             if (_editorCameraScript != null && defaultTarget != null)
             {
                 _editorCameraScript.currenTarget = defaultTarget.transform;
             }
         }
+    }
 
-        // The forced Quaternion.Slerp rotation system was removed from this method!
-        // This ensures the selection script does not fight the camera's orbiting controls.
+    // Public method that our UI Search Bar will execute when the user submits text
+    public void SearchForPlanet(string textInput)
+    {
+        if (string.IsNullOrWhiteSpace(textInput))
+        {
+            return;
+        }
+
+        // We find every GameObject in our scene that has a collider component attached
+        Collider[] allSceneObjects = FindObjectsByType<Collider>(FindObjectsSortMode.None);
+
+        foreach (Collider potentialTarget in allSceneObjects)
+        {
+            // Compare the names ignoring case constraints cleanly
+            if (potentialTarget.gameObject.name.Equals(textInput, System.StringComparison.OrdinalIgnoreCase))
+            {
+                currentTarget = potentialTarget.gameObject;
+                Debug.Log($"Search system successfully found target match: {currentTarget.name}");
+
+                if (_editorCameraScript != null)
+                {
+                    _editorCameraScript.currenTarget = currentTarget.transform;
+
+                    // FIXED CALL: We execute the optimized standalone method directly 
+                    // without passing fake or expensive input context structures!
+                    _editorCameraScript.ExecuteFocus();
+                }
+                break;
+            }
+        }
     }
 }

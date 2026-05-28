@@ -162,7 +162,8 @@ PlayerSettings:
   resetResolutionOnWindowResize: 0
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
-  applicationIdentifier: {}
+  applicationIdentifier:
+    Standalone: com.DefaultCompany.Contract-Simple-Solar-System
   buildNumber:
     Standalone: 0
     VisionOS: 0
@@ -774,8 +775,8 @@ PlayerSettings:
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: Contract_Simple_Solar_System
-  metroPackageVersion: 
+  metroPackageName: ContractSimpleSolarSystem
+  metroPackageVersion: 1.0.0.0
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
@@ -783,7 +784,7 @@ PlayerSettings:
   metroCertificateNotAfter: 0000000000000000
   metroApplicationDescription: Contract_Simple_Solar_System
   wsaImages: {}
-  metroTileShortName: 
+  metroTileShortName: Contract_Simple_Solar_System
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0

@@ -4,30 +4,34 @@ using System.Collections;
 public class RotateAround : MonoBehaviour {
 
     [Tooltip("This is the object that the script's game object will rotate around")]
-	public Transform target; // the object to rotate around
+    public Transform target; // the object to rotate around
+
     [Tooltip("This is the speed at which the object rotates")]
-	public int speed; // the speed of rotation
-	
-	void Start() {
-		if (target == null) 
-		{
-			target = this.gameObject.transform;
-			Debug.Log ("RotateAround target not specified. Defaulting to this GameObject");
-		}
-	}
+    public float speed; // Changed to float for precise speed control
 
-	// Update is called once per frame
-	void Update (){
+    void Start()
+    {
+        if (target == null)
+        {
+            target = this.gameObject.transform;
+            Debug.Log("RotateAround target not specified. Defaulting to this GameObject");
+        }
+    }
 
+    // FIXED: Running our rotation inside LateUpdate ensures the planet moves 
+    // right before the camera calculates its tracking. This delivers 100% stable,
+    // silky-smooth movement without needing any heavy Rigidbody components!
+    void LateUpdate()
+    {
         RotateObject();
-
     }
 
     private void RotateObject()
     {
-        // RotateAround takes three arguments, first is the Vector to rotate around
-        // second is a vector that axis to rotate around
-        // third is the degrees to rotate, in this case the speed per second
-        transform.RotateAround(target.transform.position, target.transform.up, speed * Time.deltaTime);
+        // RotateAround takes three arguments:
+        // 1. The Vector position to rotate around
+        // 2. The axis vector to rotate around
+        // 3. The degrees to rotate per frame using standard Time.deltaTime
+        transform.RotateAround(target.position, target.up, speed * Time.deltaTime);
     }
 }
