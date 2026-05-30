@@ -280,10 +280,10 @@ public class UnityEditorCamera : MonoBehaviour
 
             // We gradually slide our current flight velocity vector toward the  desired target vector
             // This handles smooth acceleration up to full speed and clean deceleration drifting back down to rest when released
-            _smoothedFlightVelocity = Vector3.Lerp(_smoothedFlightVelocity, targetDirection * _flightSpeed, Time.deltaTime * lerpSpeed);
+            _smoothedFlightVelocity = Vector3.Lerp(_smoothedFlightVelocity, targetDirection * _flightSpeed, Time.unscaledDeltaTime * lerpSpeed);
 
             // Now we append our smoothed flight velocity tracking offsets directly onto our phantom target destination tracker coordinates
-            _targetPosition += _smoothedFlightVelocity * Time.deltaTime;
+            _targetPosition += _smoothedFlightVelocity * Time.unscaledDeltaTime;
         }
     }
 
@@ -300,6 +300,6 @@ public class UnityEditorCamera : MonoBehaviour
         }
 
         // LERP for smooth movement over time
-        transform.position = Vector3.Lerp(transform.position, _targetPosition, lerpSpeed * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, _targetPosition, lerpSpeed * Time.unscaledDeltaTime);
     }
 }
