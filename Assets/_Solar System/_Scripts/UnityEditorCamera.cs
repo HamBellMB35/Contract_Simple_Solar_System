@@ -44,6 +44,16 @@ public class UnityEditorCamera : MonoBehaviour
     [SerializeField] private float _followDistanceAnchor; // So the follow distance doesnt get overwritten by lerp? << REVISIT THIS LATER >>
     public Transform currenTarget;
 
+    [Header("Encyclopedia Integration")]
+    [Tooltip("Drag your InforPromtText GameObject here!")]
+    [SerializeField] private GameObject _infoPromptText;
+
+    // This will temporarily store the data of whatever planet we are currently focusing on
+    [HideInInspector] public PlanetData hoveredPlanetData;
+
+
+
+
     void Start()
     {
         // Set our phantom target position to start wherever the camera is currently placed
@@ -126,13 +136,37 @@ public class UnityEditorCamera : MonoBehaviour
     // can call it instantly without forcing Unity to allocate background frame memory or throw performance stalls!
     public void ExecuteFocus()
     {
+
+        if (_infoPromptText != null)
+        {
+            // We reset our prompts states
+            _infoPromptText.SetActive(false);
+        }
+
+         hoveredPlanetData = null;
+
         if (currenTarget != null)
         {
             // We tell the script we are offcially following a target
             _isFollowing = true;
 
-            // We find the direction from the planet to the camera
-            Vector3 directionToCamera = (transform.position - currenTarget.position).normalized;
+            // We look for an Identity script on the focused planet target
+            CelestialBodyIdentity planetIdentity = currenTarget.GetComponent<CelestialBodyIdentity>();
+
+            if (planetIdentity != null && planetIdentity.bodyData != null)
+            {
+                // We save the data profile to our camera refrence box
+                hoveredPlanetData = planetIdentity.bodyData;
+
+                if (_infoPromptText != null)
+                {
+                    // We turn on the press I for infor promt text on the screen
+                    _infoPromptText.SetActive(true);
+                }
+            }
+
+                    // We find the direction from the planet to the camera
+                    Vector3 directionToCamera = (transform.position - currenTarget.position).normalized;
 
             // Safety Check: If the camera is exactly on top of the planet, back up along the z axis
             if (directionToCamera == Vector3.zero)
@@ -177,6 +211,13 @@ public class UnityEditorCamera : MonoBehaviour
         if (context.performed)
         {
             _isFollowing = false;
+            hoveredPlanetData = null;
+
+            if (_infoPromptText != null)
+            {
+                _infoPromptText.SetActive(false);
+            }
+
             Debug.Log("Camera follow disabled via Escape key.");
         }
     }
@@ -277,6 +318,14 @@ public class UnityEditorCamera : MonoBehaviour
 
             // BREAKAWAY: If the player manually orverrrides systems poistions by typing movement, we turn the following off and go into free-flight mode
             _isFollowing = false;
+
+            // We hide the promt when player flies away from the planet
+            hoveredPlanetData = null;
+            
+            if (_infoPromptText != null)
+            {
+                _infoPromptText.SetActive(false);
+            }
 
             // We gradually slide our current flight velocity vector toward the  desired target vector
             // This handles smooth acceleration up to full speed and clean deceleration drifting back down to rest when released
