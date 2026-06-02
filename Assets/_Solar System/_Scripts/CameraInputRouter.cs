@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 public class CameraInputRouter : MonoBehaviour
 {
     // These auto-properties store raw data from the mouse and keyboard inputs data-safely
-    // Other components can read these freely but cannot overwrite them from the outside!
+    // Other components can read these freely but cannot overwrite them from the outside
     public Vector2 MouseDelta { get; private set; }
     public Vector2 MovementInput { get; private set; }
     public float VerticalInput { get; private set; }

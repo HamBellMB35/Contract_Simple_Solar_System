@@ -615,7 +615,7 @@ PrefabInstance:
       addedObject: {fileID: 719771338}
     - targetCorrespondingSourceObject: {fileID: 1741346461429698, guid: 835acc1a9ebe24c0fa3854c99346f9cd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 885140522}
+      addedObject: {fileID: 885140525}
   m_SourcePrefab: {fileID: 100100000, guid: 835acc1a9ebe24c0fa3854c99346f9cd, type: 3}
 --- !u!4 &522290368 stripped
 Transform:
@@ -1018,8 +1018,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputRouter: {fileID: 570689584}
   cameraMotor: {fileID: 570689583}
-  _infoPromptText: {fileID: 570689576}
-  _encyclopediaPanel: {fileID: 1763858978}
+  _infoPromptText: {fileID: 1763858978}
+  _encyclopediaPanel: {fileID: 1423230447}
   _encyclopediaDisplay: {fileID: 1423230451}
 --- !u!114 &570689583
 MonoBehaviour:
@@ -1033,18 +1033,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caaaaa033ecde7f47a65b8b130a6bd11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputRouter: {fileID: 0}
-  uiDriver: {fileID: 0}
+  inputRouter: {fileID: 570689584}
+  uiDriver: {fileID: 570689582}
   _rotationSensitivity_X: 0.1
   _rotationSensitivity_Y: 0.1
   _panningSensitivity: 0.1
   _zoomSensitivity: 0.05
-  _flightSpeed: 20
+  _flightSpeed: 30
   lerpSpeed: 5
-  _focusDistance: 15
-  _anchorDistanceStartClamp: 1
+  _focusDistance: 25
+  _anchorDistanceStartClamp: 15
   _anchorDistanceLimitClamp: 100
-  _followDistanceAnchor: 0
+  _followDistanceAnchor: 30
   currenTarget: {fileID: 0}
   hoveredPlanetData: {fileID: 0}
 --- !u!114 &570689584
@@ -1937,7 +1937,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4751164019602776, guid: 835acc1a9ebe24c0fa3854c99346f9cd, type: 3}
   m_PrefabInstance: {fileID: 331595733}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &885140522
+--- !u!114 &885140525
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1950,7 +1950,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 885140521}
-  speed: -1
+  speed: -5
 --- !u!1001 &887585431
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3648,7 +3648,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -410, y: -396}
+  m_AnchoredPosition: {x: -410, y: -440}
   m_SizeDelta: {x: 1571.79, y: 880}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1677574298
