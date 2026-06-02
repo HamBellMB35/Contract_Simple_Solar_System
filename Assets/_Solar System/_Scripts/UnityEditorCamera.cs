@@ -51,6 +51,11 @@ public class UnityEditorCamera : MonoBehaviour
     // This will temporarily store the data of whatever planet we are currently focusing on
     [HideInInspector] public PlanetData hoveredPlanetData;
 
+    [Header("Encyclopedia Panel Hook")]
+    [SerializeField] private GameObject _encyclopediaPanel;
+    [SerializeField] private PlanetEncyclopediaDisplay _encyclopediaDisplay;
+    private bool _isDataPanelOpen = false;
+
 
 
 
@@ -131,11 +136,46 @@ public class UnityEditorCamera : MonoBehaviour
         }
     }
 
+    public void OnOpenEncyclopedia(InputAction.CallbackContext context)
+    {
+        // Only run when the key is tapped down, and only if we are currently tracking a valid planet data card
+        if (context.performed && hoveredPlanetData != null)
+        {
+            _isDataPanelOpen = !_isDataPanelOpen; // Toggle the data panel on and off with the same key
+            
+            if (_encyclopediaPanel != null)
+            {
+                _encyclopediaPanel.SetActive(_isDataPanelOpen);
+            }
+
+            // === NEW FIX: Handle the "Press I for info" prompt text visibility ===
+            if (_infoPromptText != null)
+            {
+                // If the big panel is open (!True = False), hide the prompt text.
+                // If the big panel is closed (!False = True), show the prompt text.
+                _infoPromptText.SetActive(!_isDataPanelOpen);
+            }
+
+            if (_isDataPanelOpen && _encyclopediaPanel != null)
+            {
+                // We Pass our outomated data card over to our display window text fields
+                _encyclopediaDisplay.DisplayPlanetInfo(hoveredPlanetData);
+            }
+        }
+    }
+
+
+
     // This isolated method handles the raw target framing calculations directly.
     // By keeping it separate from the Input System callback structure, external scripts (like our Search Bar)
     // can call it instantly without forcing Unity to allocate background frame memory or throw performance stalls!
     public void ExecuteFocus()
     {
+
+        //**** FIX : We close the data panel if its open when we click to focus on a new planet, this prevents the bug where the data panel gets stuck open with no data when you click on empty space after looking at a planet
+        _isDataPanelOpen = false;
+        if (_encyclopediaPanel != null) _encyclopediaPanel.SetActive(false);
+
 
         if (_infoPromptText != null)
         {
@@ -218,6 +258,10 @@ public class UnityEditorCamera : MonoBehaviour
                 _infoPromptText.SetActive(false);
             }
 
+            //****** FIX We close the data panel if its open when we click to focus on a new planet, this prevents the bug where the data panel gets stuck open with no data when you click on empty space after looking at a planet
+            _isDataPanelOpen = false;
+            if (_encyclopediaPanel != null) _encyclopediaPanel.SetActive(false);
+
             Debug.Log("Camera follow disabled via Escape key.");
         }
     }
@@ -295,9 +339,24 @@ public class UnityEditorCamera : MonoBehaviour
     {
         if (_isFollowing && currenTarget != null)
         {
-            // Unity's built in LookAt function is really useful for this, it handles all the math of rotating to face the target for us
-            // it forces the camer's Z forward axis to point directly at the target's center coordinates every single fram, and the Y axis to stay upright
-            transform.LookAt(currenTarget.position, Vector3.up);
+            //// Unity's built in LookAt function is really useful for this, it handles all the math of rotating to face the target for us
+            //// it forces the camer's Z forward axis to point directly at the target's center coordinates every single fram, and the Y axis to stay upright
+            //transform.LookAt(currenTarget.position, Vector3.up);
+
+            if (_isFollowing && currenTarget != null)
+            {
+                Vector3 lookTarget = currenTarget.position;
+
+                // If the data panel is open, slide our focal point slightly to the RIGHT of the planet 
+                // from the camera's perspective. This forces the planet itself to visually drift to the LEFT of your monitor layout!
+                if (_isDataPanelOpen)
+                {
+                    // Push the focal target rightward by a fraction of our overall viewing distance gap
+                    lookTarget += transform.right * (_followDistanceAnchor * 0.75f);
+                }
+
+                transform.LookAt(lookTarget, Vector3.up);
+            }
         }
     }
 
@@ -326,6 +385,10 @@ public class UnityEditorCamera : MonoBehaviour
             {
                 _infoPromptText.SetActive(false);
             }
+
+            //***** FIX We close the data panel if its open when we click to focus on a new planet, this prevents the bug where the data panel gets stuck open with no data when you click on empty space after looking at a planet
+            _isDataPanelOpen = false;
+            if (_encyclopediaPanel != null) _encyclopediaPanel.SetActive(false);
 
             // We gradually slide our current flight velocity vector toward the  desired target vector
             // This handles smooth acceleration up to full speed and clean deceleration drifting back down to rest when released
