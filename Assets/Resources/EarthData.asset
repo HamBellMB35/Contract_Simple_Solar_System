@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planetName: Earth
   planetMass: 5.97 x 10^24 kg
+  planetSize: 'Equatorial Circumference: 40,075 km'
   planetRotation: 24 Hours
   planetRevolution: 365 Days
   orbitalSpeed: 29.78 Km/s

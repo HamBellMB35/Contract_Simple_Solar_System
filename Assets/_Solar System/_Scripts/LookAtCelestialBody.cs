@@ -5,7 +5,7 @@ using TMPro;
 public class LookAtCelestialBody : MonoBehaviour {
 
     [Tooltip("Reference to our camera controller")]
-    private UnityEditorCamera _editorCameraScript; // Reference to the camera controller script
+    private CameraFlightMotor _editorCameraScript; // Reference to the camera controller script
 
     [Tooltip("This is the object that the script's game object will look at by default")]
     public GameObject defaultTarget; // the default target that the camera should look at
@@ -34,7 +34,7 @@ public class LookAtCelestialBody : MonoBehaviour {
 
         if (_mainCamera != null)
         {
-            _editorCameraScript = _mainCamera.GetComponent<UnityEditorCamera>();
+            _editorCameraScript = _mainCamera.GetComponent<CameraFlightMotor>();
 
             if (_editorCameraScript == null)
             {

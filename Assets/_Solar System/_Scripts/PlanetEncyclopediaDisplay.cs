@@ -9,6 +9,7 @@ public class PlanetEncyclopediaDisplay : MonoBehaviour
     [Header("UI Text Fields")]
     [SerializeField] private TextMeshProUGUI planetNameField;
     [SerializeField] private TextMeshProUGUI massField;
+    [SerializeField] private TextMeshProUGUI sizeField;
     [SerializeField] private TextMeshProUGUI rotationField;
     [SerializeField] private TextMeshProUGUI revolutionField;
     [SerializeField] private TextMeshProUGUI speedField;
@@ -21,6 +22,7 @@ public class PlanetEncyclopediaDisplay : MonoBehaviour
 
         planetNameField.text = "Planet: " + dataCard.planetName;
         massField.text = dataCard.planetMass;
+        sizeField.text = dataCard.planetSize;
         rotationField.text = dataCard.planetRotation;
         revolutionField.text = dataCard.planetRevolution;
         speedField.text = dataCard.orbitalSpeed;

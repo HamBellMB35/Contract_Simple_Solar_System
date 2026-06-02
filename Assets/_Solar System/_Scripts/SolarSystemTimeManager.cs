@@ -57,4 +57,18 @@ public class SolarSystemTimeManager : MonoBehaviour
 
     }
 
+    // This public method will close the application when hooked up to a UI button
+    public void ExitSimulation()
+    {
+        Debug.Log("Exiting Solar System Simulation...");
+
+        // 1. If we are running inside the Unity Editor, stop the play mode
+        #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+        #endif
+
+        // 2. If we are running a built executable game, close the application window
+        Application.Quit();
+    }
+
 }
