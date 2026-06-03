@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7fb1dcd3c16d9184490c662fbdc4e657, type: 3}
-  m_Name: VenusData
+  m_Name: MarsData
   m_EditorClassIdentifier: 
-  planetName: Venus
-  planetMass: 4.87 x 10^24 Kg
-  planetSize: Radius 6,051.8 Km
-  planetRotation: 243 Earth days
-  planetRevolution: 225 Earth days
-  orbitalSpeed: 35.02 km/s
-  planetDescription: This is a test
+  planetName: Mars
+  planetMass: $6.42 x 10^23 kg
+  planetSize: Radius 3,389.5 Km
+  planetRotation: 24.6 Hours
+  planetRevolution: 687 Days
+  orbitalSpeed: 24.07 Km/s
+  planetDescription: 
