@@ -45,7 +45,7 @@ public class SolarSystemTimeManager : MonoBehaviour
         buttonTransform.localScale = originalScale * _buttonShrinkScale;
 
 
-        // WAIT FOR 0.5 SECONDS
+        // WAIT FOR 0.25 SECONDS
         // CRITICAL CHECK: We use WaitForSecondsRealtime instead of WaitForSeconds.
         // Because the pause button sets Time.timeScale to 0, standard time waiting freezes! 
         // Realtime looks at your physical wristwatch, ensuring the animation still plays while paused

@@ -147,7 +147,7 @@ public class CameraFlightMotor : MonoBehaviour
             // This keeps our internal record in sync with the new angle so the camera won't break when we rotate again
             //_pitch = transform.eulerAngles.x;
 
-            // === FIX: SANITIZE PITCH TO PREVENT GIMBAL LOCK SPINNING ===
+            // === FIXED: SANITIZE PITCH TO PREVENT GIMBAL LOCK SPINNING ===
             // Unity eulerAngles always return a positive 0-360 loop. If the camera is tilted upward,
             // it might read as 275-359 degrees. We normalize this back into a clean -90 to 90 scale 
             // so it matches our HandleOrbiting() math perfectly!

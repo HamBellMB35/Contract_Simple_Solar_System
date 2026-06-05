@@ -29,9 +29,9 @@ public class RotateAround : MonoBehaviour {
     private void RotateObject()
     {
         // RotateAround takes three arguments:
-        // 1. The Vector position to rotate around
-        // 2. The axis vector to rotate around
-        // 3. The degrees to rotate per frame using standard Time.deltaTime
+        //  The Vector position to rotate around
+        //  The axis vector to rotate around
+        //  The degrees to rotate per frame using standard Time.deltaTime
         transform.RotateAround(target.position, target.up, speed * Time.deltaTime);
     }
 }
